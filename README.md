@@ -111,4 +111,4 @@ You will receive a status 204
 
 ### How to improve
 
-The update endpoint is receiving the ID in the request body. Try to change it and send the user id using the request path, as did in the GET by id. ;)
+The update endpoint is receiving the ID in the request body. Try to change it and send the user id using the request path. ;)
