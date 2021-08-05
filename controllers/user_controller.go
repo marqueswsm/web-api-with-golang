@@ -10,8 +10,8 @@ import (
 
 func ShowUser(c *gin.Context) {
 	id := c.Param("id")
-	newid, err := strconv.Atoi(id)
 
+	newid, err := strconv.Atoi(id)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "ID must to be integer",
@@ -54,7 +54,7 @@ func CreateUser(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "Failed to create an user",
+			"error": "Failed to create an user" + err.Error(),
 		})
 
 		return
@@ -66,16 +66,69 @@ func CreateUser(c *gin.Context) {
 func ShowAllUsers(c *gin.Context) {
 	db := database.GetDatabase()
 	var users []models.User
-
 	err := db.Find(&users).Error
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "Failed return all users",
+			"error": "cannot find product by id: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, users)
+}
+
+func UpdateUser(c *gin.Context) {
+	db := database.GetDatabase()
+	var user models.User
+
+	err := c.ShouldBindJSON(&user)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Failed to parse user to json",
 		})
 
 		return
 	}
 
-	c.JSON(200, users)
+	err = db.Save(&user).Error
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Failed to create an user" + err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(200, user)
+}
+
+func DeleteUser(c *gin.Context) {
+	id := c.Param("id")
+
+	newid, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "ID must to be integer",
+		})
+
+		return
+	}
+
+	db := database.GetDatabase()
+
+	var user models.User
+	err = db.Delete(&user, newid).Error
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "User not deleted",
+		})
+
+		return
+	}
+
+	c.JSON(204, user)
 }

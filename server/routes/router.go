@@ -10,7 +10,11 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 	{
 		users := main.Group("users")
 		{
-			users.GET("/", controllers.ShowUser)
+			users.GET("/:id", controllers.ShowUser)
+			users.GET("/", controllers.ShowAllUsers)
+			users.POST("/", controllers.CreateUser)
+			users.PATCH("/", controllers.UpdateUser)
+			users.DELETE("/:id", controllers.DeleteUser)
 		}
 		status := main.Group("status")
 		{
